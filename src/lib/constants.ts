@@ -4,7 +4,6 @@ export const STATUS_COLORS = {
     WIP: "#00c9c4",
     CLOSED: "#888888"
 }
-
 export const BASE_HEADERS = {
     'Content-type': 'application/json'
 }

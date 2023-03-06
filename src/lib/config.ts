@@ -9,4 +9,11 @@ export const sectionColors = [
     'variant-filled-tertiary'
 ]
 
+export const sectionBorders = [
+    'variant-ringed-error',
+    'variant-ringed-secondary',
+    'variant-ringed-primary',
+    'variant-ringed-tertiary'
+]
+
 export const defaultValueKey = "price"

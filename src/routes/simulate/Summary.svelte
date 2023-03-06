@@ -20,7 +20,7 @@
         <div>TVA: {total * VAT} EUR</div>
         <div class="flex gap-2 w-full text-right">
             <span>Neplătitor de TVA</span>
-            <a href="info/#vat">
+            <a href="../info/#vat">
                 <Icon src="{Info}" theme="solid" class="w-5"/>
             </a>
         </div>

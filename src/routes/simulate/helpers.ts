@@ -1,13 +1,17 @@
-import {sectionColors} from "../../lib/config"
+import {sectionBorders, sectionColors} from "../../lib/config"
 
 export const byIndex = (sel: number, idx: number, _: any) => sel === idx
 
-export const getLines = (data: ListPL) => Object.values(data).filter(entry => entry.meta)
+export const getLines = (data: ListPL, section: number | undefined = undefined) =>
+    Object.values(data).filter(
+        entry => section ? entry.meta && entry.meta.section === section : entry.meta
+    )
 
 export const getSection = (sec: SectionsPL, data: ListPL) =>
     Object.values(data).filter(entry => entry.meta?.section === sec)
 
-export const infoLink = (section: number, index: number) => `S${section}-I${index}`
+export const infoLink = (section: number, index: number) => `info/#S${section}-I${index}`
+export const infoId = (section: number, index: number) => `S${section}-I${index}`
 
 export const getDefaults = (data: ListPL) =>
     getLines(data).reduce((acc: any, entry: EntryPL) => {
@@ -16,7 +20,7 @@ export const getDefaults = (data: ListPL) =>
     }, {})
 
 export const getSectionColor = (section: number) => sectionColors[section]
-
+export const getSectionBorder = (section: number) => sectionBorders[section]
 // export const calc = (data: ListPL, formSel: DefaultSelection) => {
 //     const episodes = data.packages[formSel.pac].episodes
 //     return data.setTime[formSel.st].price * episodes +
