@@ -1,10 +1,11 @@
 <script>
     import {beforeNavigate} from '$app/navigation'
     import {Tab, TabGroup} from '@skeletonlabs/skeleton'
-    import TabTitle from './TabTitle.svelte'
-    import Summary from './Summary.svelte'
-    import {getDefaults, getSection} from './helpers.ts'
-    import Line from './Line.svelte'
+    import TabTitle from '$lib/components/app/simulate/TabTitle.svelte'
+    import Summary from '$lib/components/app/simulate/Summary.svelte'
+    import Line from '$lib/components/app/simulate/Line.svelte'
+    import {getDefaults, getDefaultSection, getSection} from '$lib/helpers/simulate.ts'
+
     export let data = {}
 
     const defaults = getDefaults(data)
@@ -26,6 +27,10 @@
         sel = {...defaults}
     }
 
+    const resetSection = () => {
+        const sectionDefaults = getDefaultSection(tab, data)
+        sel = {...sel, ...sectionDefaults}
+    }
     const submitForm = () => {
         alert('submitted')
     }
@@ -33,11 +38,10 @@
     //let total
     //$:  total = 0 //calc(data, sel)
 
-    console.log(data)
 </script>
 
-<div class="w-full md:w-1/2 lg:w-3/4">
-    <div class="card m-4 p-4">
+<div class="w-full">
+    <div class="card w-full md:w-[calc(100%-360px)] m-4 p-4">
         <header class="card-header text-xl font-bold mb-4">
             <div>Configurează un pachet de emisiuni:</div>
         </header>
@@ -47,7 +51,6 @@
                     <TabTitle section="{section}"/>
                 </Tab>
             {/each}
-            <!-- Panel -->
             <svelte:fragment slot="panel">
                 {#if tab === 0}
                     {#each getSection(tab, data) as line}
@@ -66,9 +69,11 @@
         </TabGroup>
     </div>
 </div>
-<div class="hidden md:block absolute right-1 top-16 md:w-1/2 lg:w-1/4 -mt-1">
-    <Summary episodes="{12}"
-             total="{2300}"
+<div class="hidden md:block absolute top-16 w-[340px] right-1 -mt-1">
+    <Summary total="{2300}"
+             data="{data}"
+             tab="{tab}"
              resetForm="{resetForm}"
+             resetSection="{resetSection}"
              submitForm="{submitForm}"/>
 </div>

@@ -1,6 +1,6 @@
 <script>
     import {Avatar} from '@skeletonlabs/skeleton'
-    import {getSectionColor} from './helpers.ts'
+    import {getSectionColor} from '$lib/helpers/simulate.ts'
 
     export let section
 </script>

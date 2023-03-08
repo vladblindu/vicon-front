@@ -12,6 +12,14 @@ enum SectionsPL {
     EXTRA = 4
 }
 
+type SectionPL = {
+    code: string,
+    name: string,
+    index: number,
+    title: string,
+    description: string
+}
+
 type MetaPL = {
     name: string,
     title: string,

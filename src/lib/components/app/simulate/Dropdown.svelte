@@ -2,7 +2,7 @@
 <script>
     import Label from './Label.svelte'
     import {defaultValueKey} from '$lib/config.ts'
-    import {byIndex} from './helpers.ts'
+    import {byIndex} from '$lib/helpers/simulate.ts'
 
     let info
     export let lineSel = 0

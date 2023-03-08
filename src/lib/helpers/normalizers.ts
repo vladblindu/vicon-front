@@ -1,18 +1,7 @@
-import {STATUS_COLORS} from "../constants"
-
 type MediaFieldDef = {
     key: string,
     multi: boolean
 }
-
-
-enum ProductionStatus {
-    "REQUEST" = "REQUEST",
-    "CONFIRMED" = "CONFIRMED",
-    "WIP" = "WIP",
-    "CLOSED" = "CLOSED"
-}
-
 const singleMediaUrl = (img: StrapiSingleMedia) => img.data.attributes.url
 
 const multiMediaUrl = (img: StrapiMultiMedia) => img.data.map((el: StrapiMediaElement) => el.attributes.url)
@@ -33,5 +22,3 @@ export const mediaToUrl = (payload: any, mediaFields: MediaFieldDef[]) =>
         else
             acc[mf.key] = singleMediaUrl(acc[mf.key])
     }, payload)
-
-export const getStatusColor = (status: ProductionStatus) => STATUS_COLORS[status]

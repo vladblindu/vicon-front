@@ -2,7 +2,7 @@
     import {Avatar} from '@skeletonlabs/skeleton'
     import {Icon} from '@steeze-ui/svelte-icon'
     import {Info} from '@steeze-ui/feather-icons'
-    import {getSectionColor, infoLink} from './helpers.ts'
+    import {getSectionColor, infoLink} from '$lib/helpers/simulate.ts'
 
     export let title
     export let value

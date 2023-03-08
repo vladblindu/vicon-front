@@ -1,5 +1,5 @@
 <script>
-    import {getLines, getSectionColor, getSectionBorder, infoId} from '../simulate/helpers.ts'
+    import {getLines, getSectionColor, getSectionBorder, infoId} from '$lib/helpers/simulate.ts'
     import {Avatar, ProgressRadial} from '@skeletonlabs/skeleton'
     import {CHECKBOX, DROPDOWN} from '$lib/constants.ts'
 
@@ -19,10 +19,10 @@
                     {section.description}
                 </div>
                 <div class="mt-4">
-                    {#each getLines(data, section.index) as category, index}
-                        <div id="{infoId(section.index, index)}" class=" mb-3 rounded-md p-4 {getSectionBorder(section.index)}">
+                    {#each getLines(data, section.index) as category}
+                        <div id="{infoId(section.index, category.meta.index)}" class=" mb-3 rounded-md p-4 {getSectionBorder(section.index)}">
                             <div class="flex gap-2 mb-4">
-                                <Avatar initials="{index + 1}"
+                                <Avatar initials="{category.meta.index + 1}"
                                         width="w-8"
                                         background="{getSectionColor(section.index)}"/>
                                 <div class="mt-1">{category.meta.title}</div>
