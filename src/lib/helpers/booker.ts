@@ -1,14 +1,9 @@
-import {nanoid} from "nanoid"
-
-// const WEEKDAYS = ["luni", "marți", "miercuri", "joi", "vineri", "sâmbătă", "duminică"]
-// const freeze = 7
-// const toDay = new Date().getDay()
 export const toSSlot = (n: number): string => {
     let tmp
     const hour = Math.floor(n)
     tmp = hour < 10 ? "0" + hour.toString() : hour.toString()
     const min = Math.round((n - hour) * 100) / 100 * 60
-    tmp += ":" + (min < 0 ? "0" + min.toString() : min.toString())
+    tmp += ":" + (min <= 0 ? "0" + min.toString() : min.toString())
     return tmp
 }
 
@@ -37,7 +32,7 @@ export type WDConfig = {
 }
 
 type WDSlot = {
-    id: string
+    dayIndex: number
     index: number
     start: number,
     shift: number
@@ -53,24 +48,18 @@ export class WorkDay {
     public workHours: WorkHours
     public timeUnit: TimeUnit
     public span: number
-    public readonly shiftsPerDay: 3
-    public hoursPerDay: number
-    public slotsPerDay: number
-    public slotsPerShift: number
+    public readonly shifts: 3
 
-    constructor(wdConf: WDConfig) {
+    constructor(dayIndex: number, wdConf: WDConfig) {
         this._slots = []
         this.workHours = wdConf.workHours
         this.timeUnit = wdConf.timeUnit
         this.span = wdConf.span
-        this.shiftsPerDay = wdConf.shifts
-        this.hoursPerDay = wdConf.workHours[1] - wdConf.workHours[0]
-        this.slotsPerDay = Math.round(this.hoursPerDay / wdConf.timeUnit)
-        this.slotsPerShift = Math.floor(this.slotsPerDay / wdConf.shifts)
+        this.shifts = wdConf.shifts
 
         for (let i = 0; i < this.slotsPerDay; i++) {
             const _slot: WDSlot = {
-                id: nanoid(),
+                dayIndex: dayIndex,
                 shift: Math.floor(i / this.slotsPerShift),
                 index: i,
                 start: wdConf.workHours[0] + i * wdConf.timeUnit,
@@ -81,24 +70,27 @@ export class WorkDay {
         }
     }
 
+    get hoursPerDay() {
+        return this.workHours[1] - this.workHours[0]
+    }
+
+    get slotsPerDay(){
+        return Math.round(this.hoursPerDay / this.timeUnit)
+    }
+
+    get slotsPerShift(){
+        return Math.floor(this.slotsPerDay / this.shifts)
+    }
     get length(): number {
         return this._slots.length
     }
 
-    busy(idx:number){
+    busy(idx: number) {
         return !!this._slots[idx].cid
     }
 
-    toBusy(idx: number, cid: number, pid: number){
-        this._slots[idx].cid = cid
-        this._slots[idx].pid = pid
-    }
-    newShift(idx: number): boolean {
-        return idx > 1 && this._slots[idx - 1].shift !== this._slots[idx].shift
-    }
-
-    byShift(shift: number): WDSlot[] {
-        return this._slots.filter(slt => slt.shift === shift)
+    slot(idx: number) {
+        return this._slots[idx]
     }
 
     getSlot(sq: SlotQuery): WDSlot {
@@ -111,6 +103,3 @@ export class WorkDay {
     }
 }
 
-// class WorkWeek{
-//
-// }

@@ -14,7 +14,8 @@ export const slotColor = {
     NEUTRAL: 'variant-filled-tertiary',
     BUSY: 'variant-filled-secondary',
     OK: 'variant-filled-primary',
-    OVER: 'variant-filled-warning'
+    OVER: 'variant-filled-warning',
+    DISABLED: 'bg-grey-500'
 }
 
 export const sectionBorders = [

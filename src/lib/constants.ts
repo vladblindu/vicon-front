@@ -4,6 +4,8 @@ export const STATUS_COLORS = {
     WIP: "#00c9c4",
     CLOSED: "#888888"
 }
+
+export const WEEK_DAYS = ["L", "M", "M", "J", "V", "S", "D"]
 export const BASE_HEADERS = {
     'Content-type': 'application/json'
 }

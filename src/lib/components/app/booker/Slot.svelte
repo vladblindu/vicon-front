@@ -1,34 +1,46 @@
 <script>
-    import {slotColor as slotColors} from '$lib/config.ts'
+    import {slotColor} from '$lib/config.ts'
 
     export let slot = {}
-    export let targeted
-    const rules = (targeted, slot) => {
-        if (!targeted.includes(slot.index))
-            return !slot.cid
-                ? slotColors.NEUTRAL
-                : slotColors.BUSY
-        if (targeted.some(t => t === slot.wd.length))
-            return slotColors.NOT_OK
-        const busy = targeted.filter(t => slot.wd.busy(t))
+    export let targeted = []
+    export let dayIndex
+    export let bookSpot
+    const rules = (tg, di, slot) => {
+        if (slot.dayIndex !== di)
+            return slotColor.NEUTRAL
+
+        if (!tg.includes(slot.index)) {
+            if(slot.cid) return slotColor.BUSY
+            if(slot.disabled) return slotColor.DISABLED
+            return slotColor.NEUTRAL
+        }
+
+        // cross the end of the day span
+        if (tg.some(t => t === slot.wd.length))
+            return slotColor.NOT_OK
+
+        // busy slots
+        const busy = tg.filter(t => slot.wd.busy(t))
         if (busy.length)
             return slot.cid
-                ? slotColors.OVER
-                : slotColors.NOT_OK
-        return slotColors.OK
-    }
+                ? `${slotColor.NOT_OK} bg-opacity-5`
+                : slotColor.NOT_OK
 
-    const slotHover = id => () => {
+        return slotColor.OK
+    }
+    const slotHover = (slot) => () => {
         for (let i = 0; i < targeted.length; i++)
-            targeted[i] = id + i
+            targeted[i] = slot.index + i
+        dayIndex = slot.dayIndex
     }
 
     let color
-    $: color = rules(targeted, slot)
-
+    $: color = rules(targeted, dayIndex, slot)
 </script>
 
-<div on:mouseenter={slotHover(slot.index)}
-     class="w-3 h-3 rounded-full {color}">
-    &nbsp;
+<div role="button"
+     on:mouseenter={slotHover(slot)}
+     on:keypress="{() => alert('yep')}"
+     on:click={bookSpot}
+     class="w-4 h-4 rounded-full {color}">
 </div>
