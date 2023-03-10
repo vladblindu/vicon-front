@@ -1,22 +1,23 @@
 <script>
 
-    import {toSSlot, WorkDay} from '$lib/helpers/booker.ts'
+    import {createReseter, toSSlot, WorkDay} from '$lib/helpers/booker.ts'
     import Slot from '$lib/components/app/booker/Slot.svelte'
     import {slotColor} from '$lib/config.ts'
+    import {CLEAR} from '$lib/constants.ts'
 
     const DAYS = ['L', 'M', 'M', 'J', 'V', 'S', 'D']
 
-    const wdConfig =
-        {
+    const wdConfig = {
             workHours: [8, 20],
             timeUnit: 0.5,
             shifts: 3,
             span: 3,
-            // rules: {
-            //     recursive:{
-            //
-            //     }
-            // }
+            rules: {
+                disabled: [
+                    '06****', '0502**'
+                ],
+                noCrossShift: false
+            }
         }
 
     const hoursPerDay = wdConfig.workHours[1] - wdConfig.workHours[0]
@@ -29,8 +30,7 @@
 
     //export let bookSpot
 
-    const CLEAR = -1
-    const RESETER = new Array(wdConfig.span).fill(CLEAR)
+    const RESETER = createReseter(wdConfig.span)
     let targeted = [...RESETER]
     let dayIndex = CLEAR
 
@@ -55,7 +55,9 @@
         </tr>
         {#each Array(slotsPerDay) as _,idx}
             {#if fis(idx)}
-                <tr class="leading-3"><td>&nbsp;</td></tr>
+                <tr class="leading-3">
+                    <td>&nbsp;</td>
+                </tr>
             {/if}
             <tr class="leading-4 hover:bg-surface-700">
                 <td>
@@ -64,8 +66,7 @@
                     </div>
                 </td>
                 {#each DAYS as d, di}
-                    <td
-                            on:mouseleave={clear}>
+                    <td on:mouseleave={clear}>
                         <Slot bind:dayIndex="{dayIndex}"
                               bind:targeted="{targeted}"
                               slot="{wds[di].slot(idx)}"

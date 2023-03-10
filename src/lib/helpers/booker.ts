@@ -1,3 +1,6 @@
+import {ANY, CLEAR} from "../constants"
+import type {WDConfig, WDRules, WDSlot} from "../types/booker"
+
 export const toSSlot = (n: number): string => {
     let tmp
     const hour = Math.floor(n)
@@ -13,35 +16,37 @@ export const toNSlot = (s: string): number => {
     return parseInt(sh) + m
 }
 
+export const createReseter = (span: number) => new Array(span).fill(CLEAR)
 
 type TimeUnit = 1.0 | 0.25 | 0.5
-export type WorkHours = [number, number]
+type WorkHours = [number, number]
 type SlotQuery = number | string
 
 // outside working hours error
 const OWHError = new Error("Outside working hours slot requested.")
 
-export type WDConfig = {
-    // array [start time as num, end time as num]
-    workHours: WorkHours
-    // time slot unit (ex: 0.5 is 30min, 0.25 is 15min)
-    timeUnit: TimeUnit
-    // how many time units are required for a shooting session
-    span: number
-    shifts: 3
-}
-
-type WDSlot = {
-    dayIndex: number
-    index: number
-    start: number,
-    shift: number
-    // client id
-    cid?: number
-    pid?: number
-    wd: WorkDay,
-    busy: Function
-}
+type DisabledChecker = (di: number, hi: number, si: number) => boolean
+export const createDisableCheck = (rules: WDRules) =>
+    // concat as string the day, shift and slot index
+    // the day index can be 0:6, shift 0:4 and day can be 0:48
+    // ex: 5223 -> is Saturday, third shift, slot 23
+    (di: number, hi: number, si: number): boolean => {
+        const st = ''.concat(
+            di.toString(),
+            hi.toString(),
+            si < 10 ? ("0" + si.toString()) : si.toString()
+        )
+        if (rules.disabled && Array.isArray(rules.disabled) && rules.disabled.length) {
+            return rules.disabled.some(rule => {
+                if (rule[1] === ANY)
+                    return rule[0] === st[0]
+                if (rule[2] === ANY)
+                    return rule.slice(0, 1) === st.slice(0, 1)
+                return rule === st
+            })
+        }
+        return false
+    }
 
 export class WorkDay {
     private readonly _slots: WDSlot[]
@@ -49,6 +54,7 @@ export class WorkDay {
     public timeUnit: TimeUnit
     public span: number
     public readonly shifts: 3
+    private readonly checkDisabled: DisabledChecker
 
     constructor(dayIndex: number, wdConf: WDConfig) {
         this._slots = []
@@ -56,14 +62,17 @@ export class WorkDay {
         this.timeUnit = wdConf.timeUnit
         this.span = wdConf.span
         this.shifts = wdConf.shifts
+        this.checkDisabled = createDisableCheck(wdConf.rules)
 
         for (let i = 0; i < this.slotsPerDay; i++) {
+            const shift = Math.floor(i / this.slotsPerShift)
             const _slot: WDSlot = {
                 dayIndex: dayIndex,
-                shift: Math.floor(i / this.slotsPerShift),
+                shift,
                 index: i,
                 start: wdConf.workHours[0] + i * wdConf.timeUnit,
                 wd: this,
+                disabled: this.checkDisabled(dayIndex, shift, i),
                 busy: () => !!this._slots[i].cid
             }
             this._slots.push(_slot)
@@ -74,13 +83,14 @@ export class WorkDay {
         return this.workHours[1] - this.workHours[0]
     }
 
-    get slotsPerDay(){
+    get slotsPerDay() {
         return Math.round(this.hoursPerDay / this.timeUnit)
     }
 
-    get slotsPerShift(){
+    get slotsPerShift() {
         return Math.floor(this.slotsPerDay / this.shifts)
     }
+
     get length(): number {
         return this._slots.length
     }

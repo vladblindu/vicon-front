@@ -25,3 +25,6 @@ export const Routes = {
 
 export const DROPDOWN = 1
 export const CHECKBOX = 2
+
+export const ANY = '*'
+export const CLEAR = -1
