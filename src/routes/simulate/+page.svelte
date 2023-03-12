@@ -1,9 +1,9 @@
 <script>
     import {beforeNavigate} from '$app/navigation'
     import {Tab, TabGroup} from '@skeletonlabs/skeleton'
-    import TabTitle from '$lib/components/app/simulate/TabTitle.svelte'
-    import Summary from '$lib/components/app/simulate/Summary.svelte'
-    import Line from '$lib/components/app/simulate/Line.svelte'
+    import TabTitle from '$lib/components/simulate/TabTitle.svelte'
+    import Summary from '$lib/components/simulate/Summary.svelte'
+    import Line from '$lib/components/simulate/Line.svelte'
     import {getDefaults, getDefaultSection, getSection} from '$lib/helpers/simulate.ts'
 
     export let data = {}

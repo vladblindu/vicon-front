@@ -12,10 +12,11 @@ export const sectionColors = [
 export const slotColor = {
     NOT_OK: 'variant-filled-error',
     NEUTRAL: 'variant-filled-tertiary',
-    BUSY: 'variant-filled-secondary',
+    BUSY: 'bg-primary-800',
     OK: 'variant-filled-primary',
-    OVER: 'variant-filled-warning',
-    DISABLED: 'bg-grey-500'
+    OVER: 'bg-error-400',
+    DISABLED: 'bg-surface-500',
+    LOCKED:'bg-secondary-700'
 }
 
 export const sectionBorders = [
