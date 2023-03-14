@@ -8,6 +8,7 @@ export class Booker {
     public bookerData: BookerData
     private _config: BookerConfig
     public weeks: Week[]
+    private _active: number
 
     constructor(bookerData: BookerData, conf: BookerConfig) {
         this.weeks = []
@@ -18,10 +19,10 @@ export class Booker {
                 new Week(wi, this)
             )
         }
+        this._active = 0
         this.setStatus = this.setStatus.bind(this)
+        this.slotHover = this.slotHover.bind(this)
     }
-
-    // slotToDate(sData: Booked)
 
     get hoursPerDay(): number {
         return this._config.workHours[1] - this._config.workHours[0]
@@ -68,27 +69,36 @@ export class Booker {
     }
 
 
+    isActive(sid: SlotId | number) {
+        return Array.isArray(sid)
+            ? sid[0] === this._active
+            : sid === this._active
+    }
+
+    setActive(wi: number) {
+        this._active = wi
+    }
+
+    slotHover(sid: SlotId) {
+        return [...sid]
+    }
+
     _slotSpan(tid: SlotId) {
         return Array.from(Array(this._config.span).fill(tid[2]), (e, i) => e + i)
     }
 
-    color(sid: SlotId, tid: SlotId): string {
+    staticColor(sid: SlotId) {
         if (this.disabled(sid)) return slotColor.DISABLED
-        // different week, day or no hover
-        if (!tid || (sid[0] !== tid[0]) || (sid[1] !== tid[1]))
-            return this.status(sid) === AVAILABLE
-                ? slotColor.AVAILABLE
-                : this.status(sid) === BUSY
-                    ? slotColor.BUSY
-                    : slotColor.LOCKED
-        // same week, same day but not in span
-        if (tid && !this._slotSpan(tid).includes(sid[2]))
-            return this.status(sid) === AVAILABLE
-                ? slotColor.AVAILABLE
-                : this.status(sid) === BUSY
-                    ? slotColor.BUSY
-                    : slotColor.LOCKED
+        return this.status(sid) === AVAILABLE
+            ? slotColor.AVAILABLE
+            : this.status(sid) === BUSY
+                ? slotColor.BUSY
+                : slotColor.LOCKED
+    }
 
+    dynamicColor(sid: SlotId, tid: SlotId): string {
+        if (!tid || (sid[0] !== tid[0]) || (sid[1] !== tid[1]) || !this._slotSpan(tid).includes(sid[2]))
+            return this.staticColor(sid)
         // cross the end of the day span
         if (tid && this._slotSpan(tid).some(t => t === this.slotsPerDay))
             return slotColor.NOT_OK
@@ -122,7 +132,7 @@ export class Booker {
             s => !this.disabled([sid[0], sid[1], s]) &&
                 this.status([sid[0], sid[1], s]) === AVAILABLE &&
                 s !== this.slotsPerDay
-        )) this._slotSpan(sid).forEach(
+        ) && this.isActive(sid)) this._slotSpan(sid).forEach(
             s => this.bookerData.data.push(
                 {
                     year: 2023,

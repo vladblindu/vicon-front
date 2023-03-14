@@ -1,54 +1,51 @@
 <script>
-
-    import Slot from '$lib/components/booker/Slot.svelte'
-    import {slotColor} from '$lib/config.ts'
-    import {DAYS} from '$lib/booker/constants'
     import {Booker} from '$lib/booker/index.ts'
+    import {WEEKS_PER_YEAR} from '$lib/booker/constants.ts'
+    import Week from '$lib/components/booker/Week.svelte'
 
     export let config = {}
     export let data = {}
 
-
     const booker = new Booker(data, config)
 
-    let tid = null
+    let active = 0
 
-    const clear = () => {
-        tid = null
+    const setActive = wi => () => {
+        active = wi
+        booker.setActive(wi)
     }
 
 </script>
-<div class="cursor-pointer flex gap-4">
+
+<div class="cursor-pointer flex items-center gap-4 overflow-scroll">
     {#each Array(booker.bookerData.meta.weekSpan) as _, wi}
-        <table>
-            {#each Array(booker.slotsPerDay) as _,si}
-                {#if booker.firstInShift(si)}
-                    <tr class="leading-3">
-                        <td>&nbsp;</td>
-                    </tr>
-                {/if}
-                <tr class="leading-4 hover:bg-surface-700">
-                    <td>
-                        <div class="font-mono text-xs {slotColor.OK} rounded-full px-2 mr-2">
-                            {booker.interval(si)}
-                        </div>
-                    </td>
-                    {#each DAYS as _, di}
-                        <td on:mouseleave={clear}>
-                            <Slot bind:tid="{tid}"
-                                  sid="{booker.slot([wi, di, si]).id}"
-                                  color="{booker.color([wi, di, si], tid)}"
-                                  setStatus="{booker.setStatus}"/>
-                        </td>
-                    {/each}
-                </tr>
-            {/each}
-        </table>
+        {#if (booker.bookerData.meta.startWeek + wi) === WEEKS_PER_YEAR}
+            <div class="h-4 rotate-90">{booker.bookerData.meta.year + 1}</div>
+        {/if}
+        <div class="cont">
+            {#if active !== wi}
+                <div on:click={setActive(wi)}
+                     on:keypress={setActive(wi)}
+                     class="overlay"></div>
+            {/if}
+            <Week active="{active === wi}" wi="{wi}" booker="{booker}"/>
+        </div>
     {/each}
 </div>
 
 <style>
-    td {
-        padding: 0 !important;
+
+    .cont {
+        position: relative;
+    }
+
+    .overlay {
+        background-color: green;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        z-index: 100;
+        opacity: 40%;
+        box-sizing: border-box;
     }
 </style>

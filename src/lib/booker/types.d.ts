@@ -35,6 +35,7 @@ type BookerEvent = {
 }
 
 type BookerMeta = {
+    year: number
     weekSpan: number,
     startWeek: number,
     // current project id

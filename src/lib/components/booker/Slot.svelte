@@ -4,23 +4,23 @@
     export let setStatus
     export let color
 
-    const slotHover = () => {
-        tid = [...sid]
+    export let slotHover
+
+    const hover = () => {
+        if (slotHover)
+            tid = slotHover(sid, tid)
     }
 
-    const bookSlot = () => {
+    const book = () => {
         setStatus(sid, tid)
-        // just to trigger a re-render
-        tid[0] = -1
-
     }
 </script>
 
 <div class="p-0.5"
      role="button"
-     on:mouseenter={slotHover}
-     on:click={bookSlot}
-     on:keypress="{bookSlot}">
+     on:mouseenter={hover}
+     on:click={book}
+     on:keypress="{book}">
     <div class="w-4 h-4 rounded-full {color}"></div>
 </div>
 

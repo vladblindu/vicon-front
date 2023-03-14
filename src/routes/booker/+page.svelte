@@ -63,8 +63,9 @@
             }
         ],
         meta: {
-            weekSpan: 2,
-            startWeek: 33
+            year: 2023,
+            weekSpan: 6,
+            startWeek: 49
         }
     }
 </script>
