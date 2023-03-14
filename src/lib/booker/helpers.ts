@@ -1,5 +1,4 @@
-import type {BookerRules} from "./types"
-import {ANY, CLEAR} from "./constants"
+import {ANY} from "./constants"
 
 export const toSSlot = (n: number): string => {
     let tmp
@@ -16,35 +15,16 @@ export const toNSlot = (s: string): number => {
     return parseInt(sh) + m
 }
 
-export const createDisableCheck = (rules: BookerRules, slotsPerShift: number) =>
-    // concat as string the day, shift and slot index
-    // the day index can be 0:6, shift 0:4 and day can be 0:48
-    // ex: 5223 -> is Saturday, third shift, slot 23
-    (di: number, si: number): boolean => {
-        const shift = Math.floor(si / slotsPerShift)
-        const st = ''.concat(
-            di.toString(),
-            shift.toString(),
-            si < 10 ? ("0" + si.toString()) : si.toString()
-        )
-        if (rules.disabled && Array.isArray(rules.disabled) && rules.disabled.length) {
-            return rules.disabled.some(rule => {
-                if (rule[0] == ANY) {
-                    if (rule[2] === ANY)
-                        return rule[1] === shift.toString()
-                    else
-                        return rule.slice(2) === si.toString()
-                }
+export const pad = (d: number) => d < 10 ? ("0" + d.toString()) : d.toString()
 
-                if (rule[1] === ANY)
-                    return rule[0] === st[0]
+export const ruleSplit = (rule: string) => {
+    const tmp = []
+    for (let i = 0; i < rule.length; i += 2)
+        tmp.push(rule.slice(i, i + 2))
+    return tmp
+}
 
-                if (rule[2] === ANY)
-                    return rule.slice(0, 2) === st.slice(0, 2)
-                return rule === st
-            })
-        }
-        return false
-    }
-
-export const createReseter = (span: number) => new Array(span).fill(CLEAR)
+export const checkRule = (slotData: string[], ruleParts: string[]) =>
+    slotData.every((sd, idx) =>
+        ruleParts[idx] === ANY || ruleParts[idx] === sd
+    )

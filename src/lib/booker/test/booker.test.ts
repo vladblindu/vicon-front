@@ -1,6 +1,5 @@
 import {describe, expect, it} from 'vitest'
-import {createDisableCheck, toNSlot, toSSlot, } from "../helpers"
-import type {BookerRules} from "../types"
+import {checkRule, ruleSplit, toNSlot, toSSlot,} from "../helpers"
 
 describe('toSSlot', () => {
     it('8.5 -> 08:30', () => {
@@ -28,34 +27,56 @@ describe('toNSlot', () => {
     })
 })
 
-describe('booker helpers', () => {
+describe('ruleSplit', () => {
 
-    describe('createDisableChecker', () => {
-        const rules: BookerRules = {
-            disabled: ['6**', '52*', '3002']
-        }
-        const slotsPerShift = 8
-        const disableCheck = createDisableCheck(rules, slotsPerShift)
-
-        it('should disable full day', () => {
-            expect(disableCheck(6,12)).to.be.true
-        })
-
-        it('should disable a shift', () => {
-            expect(disableCheck(5,23)).to.be.true
-        })
-
-        it('should not disable other shift', () => {
-            expect(disableCheck(5,3)).to.be.false
-        })
-
-        it('should disable a specific slot', () => {
-            expect(disableCheck(3,2)).to.be.true
-        })
-
-        it('should disable another', () => {
-            expect(disableCheck(1,14)).to.be.false
-        })
-
+    it('should split rule ok', () => {
+        expect(ruleSplit('**0233**')).to.deep.eq(["**", "02", "33", "**"])
     })
 })
+
+describe('checkRule', () => {
+
+    it('should check the rule', () => {
+        expect(checkRule(['12', '02', '33', '42'], ['**', '02', '33', '**'])).to.be.true
+    })
+
+    it('should also check the rule', () => {
+        expect(checkRule(['12', '02', '33', '42'], ['**', '**', '**', '**'])).to.be.true
+    })
+
+    it('should not check the rule', () => {
+        expect(checkRule(['12', '02', '33', '42'], ['**', '03', '**', '**'])).to.be.false
+    })
+})
+
+// describe('booker helpers', () => {
+
+// describe('createDisableChecker', () => {
+//     const rules: BookerRules = {
+//         disabled: ['6**', '52*', '3002']
+//     }
+//     const slotsPerShift = 8
+//     const disableCheck = createDisableCheck(rules, slotsPerShift)
+//
+//     it('should disable full day', () => {
+//         expect(disableCheck(6,12)).to.be.true
+//     })
+//
+//     it('should disable a shift', () => {
+//         expect(disableCheck(5,23)).to.be.true
+//     })
+//
+//     it('should not disable other shift', () => {
+//         expect(disableCheck(5,3)).to.be.false
+//     })
+//
+//     it('should disable a specific slot', () => {
+//         expect(disableCheck(3,2)).to.be.true
+//     })
+//
+//     it('should disable another', () => {
+//         expect(disableCheck(1,14)).to.be.false
+//     })
+//
+// })
+// })

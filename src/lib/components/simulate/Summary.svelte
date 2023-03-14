@@ -12,7 +12,7 @@
     export let resetForm
     export let resetSection
     export let submitForm
-    let section
+    let section, color
     $: section = data.sections[tab]
     $: color = getSectionColor(tab)
 </script>

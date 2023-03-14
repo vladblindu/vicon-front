@@ -11,7 +11,7 @@ export const singleData = (sData: StrapiSingleData) => ({
 })
 
 export const multiData = (mData: StrapiMultiData) =>
-    mData.data.map((sde: StrapiDataElement) => ({
+    mData.data.map((sde: StraslotStatusataElement) => ({
         ...sde.attributes, id: sde.id
     }))
 

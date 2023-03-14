@@ -11,7 +11,7 @@ export const sectionColors = [
 
 export const slotColor = {
     NOT_OK: 'variant-filled-error',
-    NEUTRAL: 'variant-filled-tertiary',
+    AVAILABLE: 'variant-filled-tertiary',
     BUSY: 'bg-primary-800',
     OK: 'variant-filled-primary',
     OVER: 'bg-error-400',

@@ -1,44 +1,8 @@
 <script>
-    import Week from '$lib/components/booker/Week.svelte'
+    //import {bookerData} from '$lib/booker/store.ts'
+    import Booker from '$lib/components/booker/Booker.svelte'
+    import {BUSY, LOCKED} from '$lib/booker/constants.ts'
 
-    const data = [
-        {
-            week: 34,
-            day: 1,
-            slot: 13,
-            pid: 45
-        },
-        {
-            week: 34,
-            day: 1,
-            slot: 14,
-            pid: 45
-        },
-        {
-            week: 34,
-            day: 1,
-            slot: 15,
-            pid: 45
-        },
-        {
-            week: 34,
-            day: 4,
-            slot: 5,
-            pid: 23
-        },
-        {
-            week: 34,
-            day: 4,
-            slot: 6,
-            pid: 23
-        },
-        {
-            week: 34,
-            day: 4,
-            slot: 7,
-            pid: 23
-        }
-    ]
     const config = {
         workHours: [8, 20],
         timeUnit: 0.5,
@@ -46,14 +10,65 @@
         span: 3,
         rules: {
             disabled: [
-                '6*', '52*', '*13'
+                '**06****', '**0502**'
             ],
             noCrossShift: false
         },
-        pid: 23
+        status: 23
+    }
+
+    const bookerData = {
+        data: [
+            {
+                year: 2023,
+                week: 34,
+                day: 1,
+                slot: 13,
+                status: LOCKED
+            },
+            {
+                year: 2023,
+                week: 34,
+                day: 1,
+                slot: 14,
+                status: LOCKED
+            },
+            {
+                year: 2023,
+                week: 34,
+                day: 1,
+                slot: 15,
+                status: LOCKED
+            },
+            {
+                year: 2023,
+                week: 34,
+                day: 4,
+                slot: 5,
+                status: BUSY
+            },
+            {
+                year: 2023,
+                week: 34,
+                day: 4,
+                slot: 6,
+                status: BUSY
+            },
+            {
+                year: 2023,
+                week: 34,
+                day: 4,
+                slot: 7,
+                status: BUSY
+            }
+        ],
+        meta: {
+            weekSpan: 2,
+            startWeek: 33
+        }
     }
 </script>
 
 <div>
-    <Week weekIndex={34} config="{config}" data="{data}"/>
+    <Booker config="{config}" data="{bookerData}"/>
 </div>

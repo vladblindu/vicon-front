@@ -13,15 +13,15 @@ type StrapiMultiMedia = {
     data: StrapiMediaElement[]
 }
 
-type StrapiDataElement = {
+type StraslotStatusataElement = {
     id: number,
     attributes: any
 }
 
 type StrapiSingleData = {
-    data: StrapiDataElement
+    data: StraslotStatusataElement
 }
 
 type StrapiMultiData = {
-    data: StrapiDataElement[]
+    data: StraslotStatusataElement[]
 }
