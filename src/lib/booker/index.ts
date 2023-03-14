@@ -104,6 +104,12 @@ export class Booker {
         return slotColor.OK
     }
 
+    getYear(sid: SlotId) {
+        return this.bookerData.meta.startWeek + sid[0] > WEEKS_PER_YEAR
+            ? this.bookerData.meta.year + 1
+            : this.bookerData.meta.year
+    }
+
     // check if there are events in bookerData.data
     status(sid: SlotId): SlotStatus {
         const matches = this.bookerData.data
@@ -126,9 +132,7 @@ export class Booker {
             s => this.bookerData.data.push(
                 {
                     // take care if it's past 1 January
-                    year: this.bookerData.meta.startWeek + sid[0] > WEEKS_PER_YEAR
-                        ? this.bookerData.meta.year + 1
-                        : this.bookerData.meta.year,
+                    year: this.getYear(s),
                     week: sid[0] + this.bookerData.meta.startWeek,
                     day: sid[1],
                     slot: s,

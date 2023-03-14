@@ -22,7 +22,9 @@
             <th></th>
         {/if}
         {#each DAYS as d, idx}
-            <th class="text-center">{d}</th>
+            <th class="text-center">
+                <div class="variant-filled-primary rounded-full font-bold">{d}</div>
+            </th>
         {/each}
     </tr>
     {#each Array(booker.slotsPerDay) as _,si}

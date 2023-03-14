@@ -16,35 +16,21 @@
 
 </script>
 
-<div class="cursor-pointer flex items-center gap-4 overflow-scroll">
+<div class="cursor-pointer flex items-stretch gap-4 overflow-scroll">
     {#each Array(booker.bookerData.meta.weekSpan) as _, wi}
+        <!-- If it's over the end of the year you get a separator-->
         {#if (booker.bookerData.meta.startWeek + wi) === WEEKS_PER_YEAR}
-            <div class="h-4 rotate-90">{booker.bookerData.meta.year + 1}</div>
+            <div class="w-6 items-stretch variant-glass-secondary pt-6">
+                <div class="w-6 rotate-90 text-sm">{booker.bookerData.meta.year + 1}</div>
+            </div>
         {/if}
-        <div class="cont">
+        <div class="relative">
             {#if active !== wi}
                 <div on:click={setActive(wi)}
                      on:keypress={setActive(wi)}
-                     class="overlay"></div>
+                     class="absolute w-full h-full bg-secondary-900 bg-opacity-40"></div>
             {/if}
             <Week active="{active === wi}" wi="{wi}" booker="{booker}"/>
         </div>
     {/each}
 </div>
-
-<style>
-
-    .cont {
-        position: relative;
-    }
-
-    .overlay {
-        background-color: green;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        z-index: 100;
-        opacity: 40%;
-        box-sizing: border-box;
-    }
-</style>
