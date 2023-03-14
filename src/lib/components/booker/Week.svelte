@@ -1,7 +1,12 @@
-<script>
+<script lang="ts">
     import Slot from '$lib/components/booker/Slot.svelte'
     import {DAYS} from '$lib/booker/constants.ts'
-    import {slotColor} from '$lib/config.ts'
+    import type {ModalComponent, ModalSettings} from "@skeletonlabs/skeleton"
+    import {modalStore} from "@skeletonlabs/skeleton"
+    import ModalConfirm from "./ModalConfirm.svelte"
+    import Shift from "$lib/components/booker/Shift.svelte"
+    import DayList from "$lib/components/booker/DayList.svelte"
+    import Ruler from "$lib/components/booker/Ruler.svelte"
 
     export let wi
     export let booker
@@ -13,19 +18,48 @@
     const clear = () => {
         tid = null
     }
+
+    const open = (modalComponent) => {
+        if (active === wi) {
+            // noinspection JSUnusedGlobalSymbols
+            const d: ModalSettings = {
+                type: 'component',
+                // Pass the component directly:
+                component: modalComponent,
+                title: "Confirmation form",
+                body: "What's up doc",
+                response: (r: boolean) => {
+                    console.log(r)
+                }
+            }
+            modalStore.trigger(d)
+        }
+    }
+    const setStatus = ([wi, di, si]: SlotId) => () => {
+
+        const modalComponent: ModalComponent = {
+            // Pass a reference to your custom component
+            ref: ModalConfirm,
+            // Add the component properties as key/value pairs
+            props: {booker, sid: [wi, di, si]},
+            // Provide a template literal for the default component slot
+            slot: '<p>Skeleton</p>'
+        }
+        open(modalComponent)
+    }
+
+    export let setActive
 </script>
 
 
 <table>
     <tr>
-        {#if active}
-            <th></th>
+        {#if active === wi}
+            <Shift active="{active}"
+                   setActive="{setActive}"
+                   booker="{booker}"/>
         {/if}
-        {#each DAYS as d, idx}
-            <th class="text-center">
-                <div class="variant-filled-primary rounded-full font-bold">{d}</div>
-            </th>
-        {/each}
+        <DayList/>
     </tr>
     {#each Array(booker.slotsPerDay) as _,si}
         {#if booker.firstInShift(si)}
@@ -34,13 +68,9 @@
             </tr>
         {/if}
         <tr class="leading-4 hover:bg-surface-700">
-            {#if active}
-                <td>
-                    <div class="font-mono text-xs {slotColor.OK} rounded-full px-2 mr-2">
-                        {booker.interval(si)}
-                    </div>
-                </td>
-            {/if}
+            <Ruler active="{active === wi}"
+                    slot="{si}"
+                    booker="{booker}"/>
             {#each DAYS as _, di}
                 <td on:mouseleave={clear}>
                     <Slot bind:tid="{tid}"
@@ -49,7 +79,7 @@
                           color="{active
                                 ? booker.dynamicColor([wi, di, si], tid)
                                 : booker.staticColor([wi, di, si])}"
-                          setStatus="{active && booker.setStatus}"/>
+                          setStatus="{setStatus([wi, di, si])}"/>
                 </td>
             {/each}
         </tr>

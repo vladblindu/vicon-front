@@ -1,7 +1,8 @@
-<script>
+<script lang="ts">
     import {Booker} from '$lib/booker/index.ts'
     import {WEEKS_PER_YEAR} from '$lib/booker/constants.ts'
     import Week from '$lib/components/booker/Week.svelte'
+    import {LEFT, RIGHT} from "../../booker/constants"
 
     export let config = {}
     export let data = {}
@@ -12,6 +13,14 @@
 
     const setActive = wi => () => {
         active = wi
+    }
+
+    const shiftActive = (dir: number) => {
+        if (dir === LEFT && active > 0)
+            setActive(active - 1)()
+        console.log(active, booker.bookerData.meta.weekSpan)
+        if (dir === RIGHT && active < (booker.bookerData.meta.weekSpan - 1))
+            setActive(active + 1)()
     }
 
 </script>
@@ -30,7 +39,9 @@
                      on:keypress={setActive(wi)}
                      class="absolute w-full h-full bg-secondary-900 bg-opacity-40"></div>
             {/if}
-            <Week active="{active === wi}" wi="{wi}" booker="{booker}"/>
+            <Week active="{active}"
+                  wi="{wi}" booker="{booker}"
+                  setActive="{shiftActive}"/>
         </div>
     {/each}
 </div>

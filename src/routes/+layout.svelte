@@ -2,10 +2,11 @@
 	import '@skeletonlabs/skeleton/themes/theme-skeleton.css';
 	import '@skeletonlabs/skeleton/styles/all.css';
 	import '../app.postcss';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import {AppShell, AppBar, Modal} from '@skeletonlabs/skeleton'
 </script>
 
 <!-- App Shell -->
+<Modal />
 <AppShell>
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
