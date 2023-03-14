@@ -17,6 +17,8 @@ type BookerConfig = {
     rules: BookerRules
 }
 type SlotId = [weekIndex: number, dayIndex: number, slotIndex: number]
+type TargetId = SlotId | null
+
 
 type BookerRules = {
     noCrossShift?: boolean

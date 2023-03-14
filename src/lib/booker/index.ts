@@ -1,6 +1,6 @@
 import {checkRule, pad, ruleSplit, toSSlot} from "./helpers"
 import {slotColor} from "../config"
-import {AVAILABLE, BUSY, CLEAR} from "./constants"
+import {AVAILABLE, BUSY} from "./constants"
 import {Week} from "./week.class"
 import type {Slot} from "./slot.class"
 
@@ -68,28 +68,21 @@ export class Booker {
     }
 
 
-    _slotSpan(sid: SlotId) {
-        return Array.from(Array(this._config.span).fill(sid[2]), (e, i) => e + i)
+    _slotSpan(tid: SlotId) {
+        return Array.from(Array(this._config.span).fill(tid[2]), (e, i) => e + i)
     }
 
     color(sid: SlotId, tid: SlotId): string {
         if (this.disabled(sid)) return slotColor.DISABLED
-        // different week
-        if (sid[0] !== tid[0])
-            return this.status(sid) === AVAILABLE
-                ? slotColor.AVAILABLE
-                : this.status(sid) === BUSY
-                    ? slotColor.BUSY
-                    : slotColor.LOCKED
-        //or different day
-        if (sid[1] !== tid[1])
+        // different week, day or no hover
+        if (!tid || (sid[0] !== tid[0]) || (sid[1] !== tid[1]))
             return this.status(sid) === AVAILABLE
                 ? slotColor.AVAILABLE
                 : this.status(sid) === BUSY
                     ? slotColor.BUSY
                     : slotColor.LOCKED
         // same week, same day but not in span
-        if (!this._slotSpan(tid).includes(sid[2]))
+        if (tid && !this._slotSpan(tid).includes(sid[2]))
             return this.status(sid) === AVAILABLE
                 ? slotColor.AVAILABLE
                 : this.status(sid) === BUSY
@@ -97,7 +90,7 @@ export class Booker {
                     : slotColor.LOCKED
 
         // cross the end of the day span
-        if (this._slotSpan(tid).some(t => t === this.slotsPerDay))
+        if (tid && this._slotSpan(tid).some(t => t === this.slotsPerDay))
             return slotColor.NOT_OK
 
         // busy or locked slots
@@ -122,10 +115,6 @@ export class Booker {
                 }
             )
         return matches.length && matches[0].status
-    }
-
-    createReseter() {
-        return new Array(this._config.span).fill(CLEAR)
     }
 
     setStatus(sid: SlotId) {

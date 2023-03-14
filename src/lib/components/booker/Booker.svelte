@@ -11,11 +11,10 @@
 
     const booker = new Booker(data, config)
 
-    const RESETER = booker.createReseter()
-    let tid = [...RESETER]
+    let tid = null
 
     const clear = () => {
-        tid = [...RESETER]
+        tid = null
     }
 
 </script>
