@@ -43,13 +43,11 @@
                 <td on:mouseleave={clear}>
                     <Slot bind:tid="{tid}"
                           sid="{booker.slot([wi, di, si]).id}"
-                          slotHover="{booker.isActive([wi, di, si]) && booker.slotHover}"
-                          color="{
-                                         booker.isActive([wi, di, si]) && tid
-                                            ? booker.dynamicColor([wi, di, si], tid)
-                                            : booker.staticColor([wi, di, si])
-                                  }"
-                          setStatus="{booker.setStatus}"/>
+                          slotHover="{booker.slotHover}"
+                          color="{active
+                                ? booker.dynamicColor([wi, di, si], tid)
+                                : booker.staticColor([wi, di, si])}"
+                          setStatus="{active && booker.setStatus}"/>
                 </td>
             {/each}
         </tr>

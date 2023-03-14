@@ -1,6 +1,6 @@
 import {checkRule, pad, ruleSplit, toSSlot} from "./helpers"
 import {slotColor} from "../config"
-import {AVAILABLE, BUSY} from "./constants"
+import {AVAILABLE, BUSY, WEEKS_PER_YEAR} from "./constants"
 import {Week} from "./week.class"
 import type {Slot} from "./slot.class"
 
@@ -8,7 +8,6 @@ export class Booker {
     public bookerData: BookerData
     private _config: BookerConfig
     public weeks: Week[]
-    private _active: number
 
     constructor(bookerData: BookerData, conf: BookerConfig) {
         this.weeks = []
@@ -19,7 +18,6 @@ export class Booker {
                 new Week(wi, this)
             )
         }
-        this._active = 0
         this.setStatus = this.setStatus.bind(this)
         this.slotHover = this.slotHover.bind(this)
     }
@@ -68,17 +66,6 @@ export class Booker {
         return true
     }
 
-
-    isActive(sid: SlotId | number) {
-        return Array.isArray(sid)
-            ? sid[0] === this._active
-            : sid === this._active
-    }
-
-    setActive(wi: number) {
-        this._active = wi
-    }
-
     slotHover(sid: SlotId) {
         return [...sid]
     }
@@ -88,12 +75,13 @@ export class Booker {
     }
 
     staticColor(sid: SlotId) {
-        if (this.disabled(sid)) return slotColor.DISABLED
-        return this.status(sid) === AVAILABLE
-            ? slotColor.AVAILABLE
-            : this.status(sid) === BUSY
-                ? slotColor.BUSY
-                : slotColor.LOCKED
+        if (this.disabled(sid))
+            return slotColor.DISABLED
+        if (this.status(sid) === AVAILABLE)
+            return slotColor.AVAILABLE
+        if (this.status(sid) === BUSY)
+            return slotColor.BUSY
+        return slotColor.LOCKED
     }
 
     dynamicColor(sid: SlotId, tid: SlotId): string {
@@ -116,6 +104,7 @@ export class Booker {
         return slotColor.OK
     }
 
+    // check if there are events in bookerData.data
     status(sid: SlotId): SlotStatus {
         const matches = this.bookerData.data
             .filter(event => {
@@ -127,15 +116,19 @@ export class Booker {
         return matches.length && matches[0].status
     }
 
+    // set events in bookerData.data
     setStatus(sid: SlotId) {
         if (this._slotSpan(sid).every(
             s => !this.disabled([sid[0], sid[1], s]) &&
                 this.status([sid[0], sid[1], s]) === AVAILABLE &&
                 s !== this.slotsPerDay
-        ) && this.isActive(sid)) this._slotSpan(sid).forEach(
+        )) this._slotSpan(sid).forEach(
             s => this.bookerData.data.push(
                 {
-                    year: 2023,
+                    // take care if it's past 1 January
+                    year: this.bookerData.meta.startWeek + sid[0] > WEEKS_PER_YEAR
+                        ? this.bookerData.meta.year + 1
+                        : this.bookerData.meta.year,
                     week: sid[0] + this.bookerData.meta.startWeek,
                     day: sid[1],
                     slot: s,

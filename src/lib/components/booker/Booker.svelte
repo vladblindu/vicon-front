@@ -12,7 +12,6 @@
 
     const setActive = wi => () => {
         active = wi
-        booker.setActive(wi)
     }
 
 </script>

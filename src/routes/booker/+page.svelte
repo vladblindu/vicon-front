@@ -70,6 +70,6 @@
     }
 </script>
 
-<div>
+<div class="pl-4">
     <Booker config="{config}" data="{bookerData}"/>
 </div>
